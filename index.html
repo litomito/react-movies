@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+    <head>
+        <title>React-starter-kit</title>
+        <meta charset="utf-8">
+        <script src="js/react.min.js"></script>
+        <script src="js/react-dom.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+        <script src="https://kit.fontawesome.com/b0cf35e0c4.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="css/styles.css" />
+    </head>
+    <body>
+        <div id="root"></div>
+        <script src="js/movies.js"></script>
+        <script type="text/babel">
+            let Movie = React.createClass({
+                render: function () {
+                    return (
+                        <div className="card">
+                            <div className="card_items">
+                                <h2 className="title">{this.props.title}</h2>
+                                <img className="image" src={this.props.image} />
+                                <p className="year">{this.props.year}</p>
+                                <p className="stars">{this.props.stars} ⭐️/ 10⭐️</p>
+                                <p className="genre">{this.props.genre}</p>
+                                <div className="btns">
+                                    <button className="delete" onClick={this.props.removeMovie}>Delete</button>
+                                    <button className="edit" onClick={this.props.editMovie}>Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+            });
+    
+            let App = React.createClass({
+                editMovie: function (movie) {
+                    let title = prompt("Enter new title", movie.title);
+                    let year = prompt("Enter new year", movie.year);
+                    let genre = prompt("Enter new genre", movie.genre);
+                    let stars = prompt("Enter new stars", movie.stars);
+                    let image = prompt("Enter new image", movie.image);
+                    movie.title = title;
+                    movie.year = year;
+                    movie.genre = genre;
+                    movie.stars = stars;
+                    movie.image = image;
+                    this.setState({
+                        movies: this.state.movies
+                    });
+                },
+                removeMovie: function (movie) {
+                    this.state.movies.splice(this.state.movies.indexOf(movie), 1);
+                    this.setState({
+                        movies: this.state.movies
+                    });
+                },
+                addMovie: function (e) {
+                    e.preventDefault();
+                    let title = document.getElementById("title").value;
+                    let year = document.getElementById("year").value;
+                    let genre = document.getElementById("genre").value;
+                    let stars = document.getElementById("stars").value;
+                    let image = document.getElementById("image").value;
+    
+                    document.getElementById("title").value = "";
+                    document.getElementById("year").value = "";
+                    document.getElementById("genre").value = "";
+                    document.getElementById("stars").value = "";
+                    document.getElementById("image").value = "";
+    
+                    let movie = {
+                        title: title,
+                        year: year,
+                        genre: genre,
+                        stars: stars,
+                        image: image
+                    };
+
+                    this.state.movies.push(movie);
+                    this.setState({
+                        movies: this.state.movies
+                    });
+                },
+                getInitialState: function () {
+                    return {
+                        movies: this.props.movies
+                    };
+                },
+                render: function () {
+                    var that = this;
+                    return (
+                        <div>
+                            <div className="form_container">
+                                <form onSubmit={this.addMovie}>
+                                    <div className="inputs">
+                                        <label for="title" className="labels">Title:</label>
+                                        <input type="text" className="inputs" id="title" placeholder="Title of the movie" required/>
+                                    </div>
+                                    <div className="inputs">
+                                        <label for="year" className="labels">Year:</label>
+                                        <input type="text" className="inputs" id="year" placeholder="Year of release" required/>
+                                    </div>
+                                    <div className="inputs">
+                                        <label for="genre" className="labels">Genre:</label>
+                                        <input type="text" className="inputs" id="genre" placeholder="The movie genre(s)" required/>
+                                    </div>
+                                    <div className="inputs">
+                                        <label for="stars" className="labels">Stars:</label>
+                                        <input type="text" className="inputs" id="stars" placeholder="The movies stars out of 10" required/>
+                                    </div>
+                                    <div className="inputs">
+                                        <label for="image" className="labels">Image:</label>
+                                        <input type="text" className="inputs" id="image" placeholder="A link to an image" required/>
+                                    </div>
+                                    <div className="submit_div">
+                                        <button type="submit" className="submit">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div className="cards">
+                                {this.state.movies.map(function (movie) {
+                                    return (
+                                        <Movie
+                                            title={movie.title}
+                                            year={movie.year}
+                                            genre={movie.genre}
+                                            stars={movie.stars}
+                                            image={movie.image}
+                                            editMovie={that.editMovie.bind(null, movie)}
+                                            removeMovie={that.removeMovie.bind(null, movie)}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    );
+                }
+            });
+            ReactDOM.render(
+                <App movies={movies} />,
+                document.getElementById('root')
+            );
+        </script>
+    </body>
+</html>
